@@ -26,7 +26,13 @@ headers = {
 }
 
 
-app = FastAPI()
+title = "Karma Computing Accounts"
+description = """
+View balance, and cashflow. 🚀
+
+"""
+
+app = FastAPI(title=title, description=description)
 
 app.add_middleware(
     CORSMiddleware,
@@ -188,7 +194,9 @@ def cashflow_last_n_months(number_of_months: int = 3):
             startDate=startDate.strftime("%Y-%m-01"),
             endDate=endDate.strftime("%Y-%m-%d"),
         )  # noqa: E501
-        cashflows.append({startDate.strftime("%b-%Y"): calculateCashflow(statementCSV)})
+        cashflows.append(
+            {startDate.strftime("%b-%Y"): calculateCashflow(statementCSV)}
+        )  # noqa: E501
 
         # Got back another month
         endDate = endDate.replace(day=1) - timedelta(days=1)
