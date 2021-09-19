@@ -46,3 +46,11 @@ def balance():
         "balance-human-readable": f"{balance_human_readable}",
     }  # noqa
     return resp
+
+
+@app.get("/available-periods")
+def get_available_periods():
+    host = f"https://api.starlingbank.com/api/v2/accounts/{BANK_ACCOUNT_ID}/statement/available-periods"  # noqa
+    req = requests.get(host, headers=headers)
+    resp = req.json()
+    return resp
