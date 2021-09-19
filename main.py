@@ -30,6 +30,16 @@ title = "Karma Computing Accounts"
 description = """
 View balance, and cashflow. 🚀
 
+# See also
+
+## Recurring Revenue
+
+- [Monthly Recurring Revenue](https://reccuring-revenue.pcpink.co.uk/docs)
+
+## Time Invested API
+
+- [Ad-Hoc support](https://time.karmacomputing.co.uk/)
+
 """
 
 app = FastAPI(title=title, description=description)
