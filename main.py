@@ -28,17 +28,17 @@ headers = {
 
 title = "Karma Computing Accounts"
 description = """
-View balance, and cashflow. 🚀
+View balance, and cashflow. <small>[Code](https://github.com/KarmaComputing/balance])</small> 🚀
 
 # See also
 
 ## Recurring Revenue
 
-- [Monthly Recurring Revenue](https://reccuring-revenue.pcpink.co.uk/docs)
+- [Monthly Recurring Revenue](https://reccuring-revenue.pcpink.co.uk/docs) ([Code](https://github.com/KarmaComputing/reccuring-revenue/))
 
 ## Time Invested API
 
-- [Ad-Hoc support](https://time.karmacomputing.co.uk/)
+- [Ad-Hoc support](https://time.karmacomputing.co.uk/) ([Code](https://github.com/KarmaComputing/time-api))
 
 """
 
