@@ -7,6 +7,8 @@ import os
 from babel.numbers import format_currency
 import io
 import csv
+from datetime import date, timedelta
+import calendar
 
 log = logging.getLogger()
 
@@ -59,10 +61,16 @@ def get_available_periods():
 
 
 @app.get("/statement/downloadForDateRange")
-def get_statement_range_CSV(DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD: str = None):
+def get_statement_range_CSV(
+    startDate: str = "yyyy-mm-dd",
+    endDate: str = "yyyy-mm-dd",
+    DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD: str = None,
+):
     host = f"https://api.starlingbank.com/api/v2/accounts/{BANK_ACCOUNT_ID}/statement/downloadForDateRange"  # noqa
-    host += "?start=2021-08-17"
-    host += "&end=2021-09-17"
+    breakpoint()
+    host += f"?start={startDate}"
+    host += f"&end={endDate}"
+
     headers["accept"] = "text/csv"
     req = requests.get(host, headers=headers)
     resp = req.text
@@ -85,7 +93,14 @@ def get_statement_range_CSV(DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD: str = None):
 
 @app.get("/cashflow-this-month")
 def calculate_cashflow():
-    statementCSV = get_statement_range_CSV()
+    today = date.today()
+    startDate = today.strftime("%Y-%m-01")  # Always first day of current month
+    last_day = calendar.monthrange(today.year, int(today.month))[1]
+    endDate = today.strftime(f"%Y-%m-{last_day}")
+
+    statementCSV = get_statement_range_CSV(
+        startDate=startDate, endDate=endDate
+    )  # noqa: E501
     credits = []
     debits = []
     for row in statementCSV[1:-1]:  # Skip header
@@ -96,9 +111,58 @@ def calculate_cashflow():
             credits.append(amount)
 
     total_credits = round(sum(credits), 2)
-    total_credits_human_readable = format_currency(total_credits, "GBP", locale="en_GB")
+    total_credits_human_readable = format_currency(
+        total_credits, "GBP", locale="en_GB"
+    )  # noqa: E501
     total_debits = round(sum(debits), 2)
-    total_debits_human_readable = format_currency(total_debits, "GBP", locale="en_GB")
+    total_debits_human_readable = format_currency(
+        total_debits, "GBP", locale="en_GB"
+    )  # noqa: E501
+    cashflow = round(total_credits + total_debits, 2)
+    cashflow_human_readable = format_currency(cashflow, "GBP", locale="en_GB")
+    return {
+        "cashflow": cashflow,
+        "cashflow-human-readable": cashflow_human_readable,
+        "total-credits": total_credits,
+        "total-credits-human-readable": total_credits_human_readable,
+        "total-debits": total_debits,
+        "total-debits-human-readable": total_debits_human_readable,
+        "credits": credits,
+        "debits": debits,
+        "statement": statementCSV,
+    }
+
+
+@app.get("/cashflow-last-month")
+def calculate_cashflow_last_month():
+
+    endDate = date.today().replace(day=1) - timedelta(days=1)
+    startDate = (date.today().replace(day=1) - timedelta(days=endDate.day)).strftime(
+        "%Y-%m-01"
+    )
+    endDate = endDate.strftime("%Y-%m-%d")
+    breakpoint()
+
+    statementCSV = get_statement_range_CSV(
+        startDate=startDate, endDate=endDate
+    )  # noqa: E501
+    credits = []
+    debits = []
+    for row in statementCSV[1:-1]:  # Skip header
+        amount = float(row[4])
+        if amount < 0:
+            debits.append(amount)
+        else:
+            credits.append(amount)
+
+    total_credits = round(sum(credits), 2)
+    total_credits_human_readable = format_currency(
+        total_credits, "GBP", locale="en_GB"
+    )  # noqa: E501
+    total_debits = round(sum(debits), 2)
+    total_debits_human_readable = format_currency(
+        total_debits, "GBP", locale="en_GB"
+    )  # noqa: E501
     cashflow = round(total_credits + total_debits, 2)
     cashflow_human_readable = format_currency(cashflow, "GBP", locale="en_GB")
     return {
