@@ -57,6 +57,10 @@ app.add_middleware(
 def balance():
     host = f"https://api.starlingbank.com/api/v2/accounts/{BANK_ACCOUNT_ID}/balance"  # noqa E501
     req = requests.get(host, headers=headers)
+    if req.status_code != 200:
+        print(f"Error getting balance:\nStatus:{req.status_code}\n{req.text}")
+        return "Error getting balance, check the logs"
+
     resp = req.json()
     balance = resp["clearedBalance"]["minorUnits"]
     balance_human_readable = format_currency(
