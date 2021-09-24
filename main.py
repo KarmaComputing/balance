@@ -56,6 +56,7 @@ app.add_middleware(
 @app.get("/")
 def balance():
     host = f"https://api.starlingbank.com/api/v2/accounts/{BANK_ACCOUNT_ID}/balance"  # noqa E501
+    headers["accept"] = "application/json"
     req = requests.get(host, headers=headers)
     if req.status_code != 200:
         print(f"Error getting balance:\nStatus:{req.status_code}\n{req.text}")
