@@ -95,32 +95,37 @@ def get_statement_range_CSV(
     headers["accept"] = "text/csv"
     req = requests.get(host, headers=headers)
     resp = req.text
-    if (
-        DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD is not None
-        and DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD
-        == os.getenv("DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD")
-    ):
-        return resp
-    else:  # Hide transaction details
-        fp = io.StringIO(resp)
-        csvreader = csv.reader(fp, delimiter=",")
-        rows = []
-        for row in csvreader:
+    fp = io.StringIO(resp)
+    csvreader = csv.reader(fp, delimiter=",")
+    rows = []
+    for row in csvreader:
+        if (
+            DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD is not None
+            and DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD
+            == os.getenv("DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD")
+        ):
+            pass
+        else:
             row[1] = "#"
             row[2] = "#"
-            rows.append(row)
-        return rows
+        rows.append(row)
+    return rows
 
 
 def calculateCashflow(statementCSV):
     credits = []
     debits = []
-    for row in statementCSV[1:-1]:  # Skip header
-        amount = float(row[4])
-        if amount < 0:
-            debits.append(amount)
-        else:
-            credits.append(amount)
+    try:
+        for row in statementCSV[1:-1]:  # Skip header
+            amount = float(row[4])
+            if amount < 0:
+                debits.append(amount)
+            else:
+                credits.append(amount)
+    except IndexError as e:
+        print(f"{e}")
+        breakpoint()
+        print("error")
 
     total_credits = round(sum(credits), 2)
     total_credits_human_readable = format_currency(
@@ -196,7 +201,10 @@ def calculate_cashflow_by_month(
 
 
 @app.get("/cashflow-last-n-months")
-def cashflow_last_n_months(number_of_months: int = 3):
+def cashflow_last_n_months(
+    number_of_months: int = 3,
+    DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD: str = None,  # noqa: E501
+):
     """Display cashflow for the last n months"""
     cashflows = []
 
@@ -208,6 +216,7 @@ def cashflow_last_n_months(number_of_months: int = 3):
         statementCSV = get_statement_range_CSV(
             startDate=startDate.strftime("%Y-%m-01"),
             endDate=endDate.strftime("%Y-%m-%d"),
+            DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD=DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD,  # noqa: E501
         )  # noqa: E501
         cashflows.append(
             {startDate.strftime("%b-%Y"): calculateCashflow(statementCSV)}
