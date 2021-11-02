@@ -124,7 +124,6 @@ def calculateCashflow(statementCSV):
                 credits.append(amount)
     except IndexError as e:
         print(f"{e}")
-        breakpoint()
         print("error")
 
     total_credits = round(sum(credits), 2)
@@ -146,8 +145,27 @@ def calculateCashflow(statementCSV):
         "total-debits-human-readable": total_debits_human_readable,
         "credits": credits,
         "debits": debits,
-        "statement": statementCSV,
+        "statement": statementCSVtoJson(statementCSV),
     }
+
+
+def statementCSVtoJson(statementCSV):
+    # ['Date', 'Counter Party', 'Reference', 'Type', 'Amount (GBP)', 'Balance (GBP)', 'Spending Category', 'Notes']
+    statementItems = []
+    for statementItem in statementCSV:
+        statementItems.append(
+            {
+                "date": statementItem[0],
+                "counterparty": statementItem[1],
+                "reference": statementItem[2],
+                "type": statementItem[3],
+                "amount-gbp": statementItem[4],
+                "balance-gbp": statementItem[5],
+                "spending-category": statementItem[6],
+                "notes": statementItem[7],
+            }
+        )
+    return statementItems
 
 
 @app.get("/cashflow-this-month")
