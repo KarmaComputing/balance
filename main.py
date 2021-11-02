@@ -28,7 +28,7 @@ headers = {
 
 title = "Karma Computing Accounts"
 description = """
-View balance, and cashflow. <small>[Code](https://github.com/KarmaComputing/balance])</small> 🚀
+View balance, and cashflow. <small>[Code](https://github.com/KarmaComputing/balance)</small> 🚀
 
 # See also
 
