@@ -222,12 +222,16 @@ def calculate_cashflow_by_month(
 def cashflow_last_n_months(
     number_of_months: int = 3,
     DISPLAY_FULL_STATEMENT_DETAIL_PASSWORD: str = None,  # noqa: E501
+    include_this_month: bool = False,
 ):
     """Display cashflow for the last n months"""
     cashflows = []
 
     # Get last month from today
-    endDate = date.today().replace(day=1) - timedelta(days=1)
+    endDate = date.today().replace(day=1)
+    if include_this_month is False:  # By default, we *don't* include current month.
+        endDate = date.today().replace(day=1) - timedelta(days=1)
+
     startDate = date.today().replace(day=1) - timedelta(days=endDate.day)
     i = 0
     while i < number_of_months:
