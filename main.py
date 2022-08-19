@@ -40,6 +40,10 @@ View balance, and cashflow. <small>[Code](https://github.com/KarmaComputing/bala
 
 - [Ad-Hoc support](https://time.karmacomputing.co.uk/) ([Code](https://github.com/KarmaComputing/time-api))
 
+## Balance Sheet
+
+[Balance sheet](http://balancesheet.karmacomputing.co.uk/
+
 """
 
 app = FastAPI(title=title, description=description)
