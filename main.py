@@ -232,7 +232,7 @@ def cashflow_last_n_months(
     cashflows = []
 
     # Get last month from today
-    endDate = date.today().replace(day=1)
+    endDate = date.today()
     if include_this_month is False:  # By default, we *don't* include current month.
         endDate = date.today().replace(day=1) - timedelta(days=1)
 
