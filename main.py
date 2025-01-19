@@ -64,7 +64,13 @@ def balance():
     req = requests.get(host, headers=headers)
     if req.status_code != 200:
         print(f"Error getting balance:\nStatus:{req.status_code}\n{req.text}")
-        return "Error getting balance, check the logs"
+        msg = "Error getting balance, check the logs"
+        try:
+            resp = req.json()
+            msg += f"\n{resp}"
+        except Exception as e:
+            print(f"Could not parse as json response:\n{e}")
+        return msg
 
     resp = req.json()
     balance = resp["clearedBalance"]["minorUnits"]
