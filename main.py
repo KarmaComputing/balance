@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 from dotenv import load_dotenv
@@ -70,7 +70,7 @@ def balance():
             msg += f"\n{resp}"
         except Exception as e:
             print(f"Could not parse as json response:\n{e}")
-        return msg, 400
+        raise HTTPException(status_code=400, detail=msg)
 
     resp = req.json()
     balance = resp["clearedBalance"]["minorUnits"]
