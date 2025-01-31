@@ -70,7 +70,7 @@ def balance():
             msg += f"\n{resp}"
         except Exception as e:
             print(f"Could not parse as json response:\n{e}")
-        return msg
+        return msg, 400
 
     resp = req.json()
     balance = resp["clearedBalance"]["minorUnits"]
