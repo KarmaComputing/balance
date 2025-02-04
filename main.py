@@ -70,6 +70,8 @@ def balance():
             msg += f"\n{resp}"
         except Exception as e:
             print(f"Could not parse as json response:\n{e}")
+            print(f"The req status_code was {req.status_code} {req.reason}")
+            print(f"The response text was: {req.text}")
         raise HTTPException(status_code=400, detail=msg)
 
     resp = req.json()
