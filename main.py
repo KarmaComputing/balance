@@ -236,7 +236,7 @@ def balance(request: Request):
             resp = build_balance_response(int(last_known_balance))
             resp = msg | resp
 
-            return JSONResponse(content=msg, status_code=503)
+            return JSONResponse(content=msg, status_code=529)
 
     except ValueError as e:
         last_known_balance = get_last_known_balance()
@@ -264,7 +264,7 @@ def balance(request: Request):
                     f"The file last_lookup_date is: {last_lookup_date}"
                 }
                 resp = build_balance_response(int(last_known_balance)) | msg
-                return JSONResponse(content=resp, status_code=503)
+                return JSONResponse(content=resp, status_code=529)
 
     host = f"https://api.starlingbank.com/api/v2/accounts/{BANK_ACCOUNT_ID}/balance"  # noqa E501
     headers["accept"] = "application/json"
@@ -330,7 +330,7 @@ def balance(request: Request):
                     log.info(msg)
             msg = get_cached_balance_resp() | msg
             log.debug("returning response with cached balance:\n" f"{msg}")
-            return JSONResponse(content=msg, status_code=503)
+            return JSONResponse(content=msg, status_code=529)
         except Exception as e:
             log.error(
                 f"Could not parse as json response:\n{e} "
